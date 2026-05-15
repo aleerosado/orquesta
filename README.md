@@ -36,13 +36,9 @@ supabase/migrations/001_initial.sql
 
 Puedes pegarla en el SQL editor de Supabase o usar Supabase CLI si el proyecto está enlazado.
 
-5. Configura Google OAuth en Supabase Auth y agrega esta URL de callback:
+5. En Supabase Auth, habilita autenticación por email y contraseña.
 
-```bash
-http://localhost:3000/api/auth/callback
-```
-
-En Vercel, usa el dominio de producción con la misma ruta.
+No se usa Google OAuth, GitHub OAuth ni magic link.
 
 6. Levanta el servidor:
 
@@ -56,5 +52,6 @@ La app queda disponible en `http://localhost:3000`.
 
 - `/` redirige a `/login` o `/dashboard` según sesión.
 - `/dashboard` está protegido por middleware.
+- `/login` permite iniciar sesión o registrarse con email y contraseña.
 - Un nuevo usuario recibe automáticamente las tareas iniciales mediante el trigger `handle_new_user`.
 - Las mutaciones usan Server Actions y revalidan `/dashboard`.
