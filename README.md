@@ -1,1 +1,60 @@
-# orquesta
+# Orquesta
+
+Gestor kanban para organizar el desarrollo de una tesis de maestría y startup de salud.
+
+## Stack
+
+- Next.js 14 App Router
+- TypeScript
+- Supabase Auth + PostgreSQL
+- Tailwind CSS
+- shadcn/ui
+- lucide-react
+- sonner
+
+## Configuración local
+
+1. Instala dependencias:
+
+```bash
+npm install
+```
+
+2. Crea `.env.local` a partir de `.env.example`:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Completa las variables de Supabase en `.env.local`.
+
+4. Ejecuta la migración SQL en Supabase:
+
+```bash
+supabase/migrations/001_initial.sql
+```
+
+Puedes pegarla en el SQL editor de Supabase o usar Supabase CLI si el proyecto está enlazado.
+
+5. Configura Google OAuth en Supabase Auth y agrega esta URL de callback:
+
+```bash
+http://localhost:3000/api/auth/callback
+```
+
+En Vercel, usa el dominio de producción con la misma ruta.
+
+6. Levanta el servidor:
+
+```bash
+npm run dev
+```
+
+La app queda disponible en `http://localhost:3000`.
+
+## Flujo esperado
+
+- `/` redirige a `/login` o `/dashboard` según sesión.
+- `/dashboard` está protegido por middleware.
+- Un nuevo usuario recibe automáticamente las tareas iniciales mediante el trigger `handle_new_user`.
+- Las mutaciones usan Server Actions y revalidan `/dashboard`.
