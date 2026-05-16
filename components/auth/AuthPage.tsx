@@ -53,12 +53,21 @@ export function AuthPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_9%,rgba(196,181,253,0.58)_0,transparent_31%),radial-gradient(circle_at_56%_22%,rgba(255,255,255,0.88)_0,transparent_32%),radial-gradient(circle_at_86%_14%,rgba(219,234,254,0.62)_0,transparent_34%),linear-gradient(135deg,#F5F3FF_0%,#FFFFFF_48%,#EEF2FF_100%)]" />
         <div className="absolute inset-x-0 top-0 h-40 bg-white/55 blur-3xl" />
 
-        <div className="relative mx-auto grid min-h-screen w-full max-w-[1880px] items-center gap-x-12 gap-y-8 px-5 py-10 sm:px-8 lg:px-14 xl:grid-cols-[480px_620px_500px] xl:grid-rows-[auto_auto] xl:px-[70px] 2xl:gap-x-16">
-          <HeroCopy />
-          <div className="hidden min-w-0 lg:block xl:self-center">
-            <KanbanPreview />
+        <div className="relative mx-auto grid min-h-screen w-full max-w-[1880px] items-center gap-x-14 gap-y-10 px-5 py-10 sm:px-8 lg:px-14 xl:grid-cols-[minmax(0,1120px)_500px] xl:px-[70px] 2xl:gap-x-20">
+          <div className="min-w-0">
+            <div className="grid items-center gap-x-12 gap-y-8 xl:grid-cols-[480px_620px]">
+              <HeroCopy />
+              <div className="hidden min-w-0 lg:block">
+                <KanbanPreview />
+              </div>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {stats.map((stat) => (
+                <StatCard key={stat} label={stat} />
+              ))}
+            </div>
           </div>
-          <section className="flex justify-center xl:self-center">
+          <section className="flex justify-center">
             <div className="w-full max-w-[500px]">
               <LoginForm />
               <div className="mt-8 text-center text-lg leading-8 text-[#4B5563]">
@@ -67,11 +76,6 @@ export function AuthPage() {
               </div>
             </div>
           </section>
-          <div className="grid gap-3 sm:grid-cols-2 xl:col-span-2 xl:grid-cols-4">
-            {stats.map((stat) => (
-              <StatCard key={stat} label={stat} />
-            ))}
-          </div>
         </div>
       </div>
     </main>
