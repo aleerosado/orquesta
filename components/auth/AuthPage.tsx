@@ -53,17 +53,17 @@ export function AuthPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_9%,rgba(196,181,253,0.58)_0,transparent_31%),radial-gradient(circle_at_56%_22%,rgba(255,255,255,0.88)_0,transparent_32%),radial-gradient(circle_at_86%_14%,rgba(219,234,254,0.62)_0,transparent_34%),linear-gradient(135deg,#F5F3FF_0%,#FFFFFF_48%,#EEF2FF_100%)]" />
         <div className="absolute inset-x-0 top-0 h-40 bg-white/55 blur-3xl" />
 
-        <div className="relative mx-auto grid min-h-screen w-full max-w-[1908px] items-center gap-x-14 gap-y-8 px-5 py-10 sm:px-8 lg:px-14 xl:grid-cols-[420px_544px_394px] xl:grid-rows-[auto_auto] xl:px-[70px] 2xl:gap-x-20">
+        <div className="relative mx-auto grid min-h-screen w-full max-w-[1908px] items-center gap-x-14 gap-y-8 px-5 py-10 sm:px-8 lg:px-14 xl:grid-cols-[420px_544px_500px] xl:grid-rows-[auto_auto] xl:px-[70px] 2xl:gap-x-20">
           <HeroCopy />
           <div className="hidden min-w-0 lg:block xl:self-center">
             <KanbanPreview />
           </div>
           <section className="flex justify-center xl:self-center">
-            <div className="w-full max-w-[394px]">
+            <div className="w-full max-w-[500px]">
               <LoginForm />
-              <div className="mt-5 text-center text-sm text-[#4B5563]">
-                <p className="font-medium text-[#111827]">Tu información está protegida.</p>
-                <p className="mt-1">Hecho con ❤️ para investigadores y emprendedores de salud.</p>
+              <div className="mt-8 text-center text-lg leading-8 text-[#4B5563]">
+                <p className="font-semibold text-[#111827]">Tu información está protegida.</p>
+                <p className="mt-2">Hecho con ❤️ para investigadores y emprendedores de salud.</p>
               </div>
             </div>
           </section>
