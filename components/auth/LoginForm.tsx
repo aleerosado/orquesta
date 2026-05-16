@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Lock, Mail } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { createClient } from "@/lib/supabase/client"
 import { hasSupabaseConfig } from "@/lib/supabase/config"
@@ -24,7 +26,7 @@ const initialState: AuthFormState = {
   password: "",
 }
 
-function validateForm(form: AuthFormState): FieldErrors {
+function validateForm(form: AuthFormState, mode: AuthMode): FieldErrors {
   const errors: FieldErrors = {}
   const email = form.email.trim()
 
@@ -36,7 +38,7 @@ function validateForm(form: AuthFormState): FieldErrors {
 
   if (!form.password) {
     errors.password = "La contraseña es requerida."
-  } else if (form.password.length < 8) {
+  } else if (mode === "signup" && form.password.length < 8) {
     errors.password = "La contraseña debe tener al menos 8 caracteres."
   }
 
@@ -75,6 +77,7 @@ export function LoginForm() {
   const [form, setForm] = useState<AuthFormState>(initialState)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
   const supabase = createClient()
@@ -87,7 +90,7 @@ export function LoginForm() {
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const validationErrors = validateForm(form)
+    const validationErrors = validateForm(form, mode)
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors)
       return
@@ -130,6 +133,28 @@ export function LoginForm() {
     })
   }
 
+  function signInWithGoogle() {
+    startTransition(async () => {
+      if (!hasSupabaseConfig()) {
+        setErrors({
+          form: "Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local.",
+        })
+        return
+      }
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+        },
+      })
+
+      if (error) {
+        setErrors(mapAuthError(error.message, mode))
+      }
+    })
+  }
+
   function switchMode(nextMode: string) {
     setMode(nextMode as AuthMode)
     setErrors({})
@@ -137,33 +162,64 @@ export function LoginForm() {
   }
 
   return (
-    <div className="rounded-lg border bg-card p-5 text-card-foreground shadow-sm">
+    <div className="rounded-[1.75rem] border border-white/80 bg-white p-6 text-[#111827] shadow-2xl shadow-violet-950/12 sm:p-8">
+      <div className="mb-7 text-center">
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-[#111827] text-xl font-semibold text-white shadow-lg shadow-violet-900/20">
+          O
+        </div>
+        <h2 className="text-2xl font-semibold tracking-tight">Orquesta</h2>
+        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#6B7280]">
+          Gestiona tu tesis, producto y startup de salud desde un tablero privado.
+        </p>
+      </div>
+
       <Tabs value={mode} onValueChange={switchMode}>
-        <TabsList className="mb-5 grid w-full grid-cols-2">
-          <TabsTrigger value="login">Iniciar sesión</TabsTrigger>
-          <TabsTrigger value="signup">Registrarse</TabsTrigger>
+        <TabsList variant="line" className="mb-6 grid h-10 w-full grid-cols-2 border-b border-[#E5E7EB] p-0">
+          <TabsTrigger
+            value="login"
+            className="rounded-none pb-3 text-sm data-active:text-[#6D28D9] after:bg-[#7C3AED]"
+          >
+            Iniciar sesión
+          </TabsTrigger>
+          <TabsTrigger
+            value="signup"
+            className="rounded-none pb-3 text-sm data-active:text-[#6D28D9] after:bg-[#7C3AED]"
+          >
+            Registrarse
+          </TabsTrigger>
         </TabsList>
+
         <TabsContent value="login">
           <AuthFields
+            mode={mode}
             form={form}
             errors={errors}
             isPending={isPending}
+            rememberMe={rememberMe}
             showPassword={showPassword}
-            submitLabel="Entrar"
+            submitLabel="Ingresar"
             onSubmit={submit}
+            onGoogle={signInWithGoogle}
             onFieldChange={updateField}
+            onModeChange={switchMode}
+            onRememberChange={setRememberMe}
             onTogglePassword={() => setShowPassword((value) => !value)}
           />
         </TabsContent>
         <TabsContent value="signup">
           <AuthFields
+            mode={mode}
             form={form}
             errors={errors}
             isPending={isPending}
+            rememberMe={rememberMe}
             showPassword={showPassword}
             submitLabel="Crear cuenta"
             onSubmit={submit}
+            onGoogle={signInWithGoogle}
             onFieldChange={updateField}
+            onModeChange={switchMode}
+            onRememberChange={setRememberMe}
             onTogglePassword={() => setShowPassword((value) => !value)}
           />
         </TabsContent>
@@ -173,38 +229,51 @@ export function LoginForm() {
 }
 
 function AuthFields({
+  mode,
   form,
   errors,
   isPending,
+  rememberMe,
   showPassword,
   submitLabel,
   onSubmit,
+  onGoogle,
   onFieldChange,
+  onModeChange,
+  onRememberChange,
   onTogglePassword,
 }: {
+  mode: AuthMode
   form: AuthFormState
   errors: FieldErrors
   isPending: boolean
+  rememberMe: boolean
   showPassword: boolean
   submitLabel: string
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  onGoogle: () => void
   onFieldChange: (field: keyof AuthFormState, value: string) => void
+  onModeChange: (mode: AuthMode) => void
+  onRememberChange: (checked: boolean) => void
   onTogglePassword: () => void
 }) {
   return (
-    <form className="space-y-4" onSubmit={onSubmit} noValidate>
+    <form className="space-y-5" onSubmit={onSubmit} noValidate>
       {errors.form && (
-        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {errors.form}
         </p>
       )}
+
       <div className="space-y-2">
-        <Label htmlFor={`${submitLabel}-email`}>Correo</Label>
+        <Label htmlFor={`${mode}-email`} className="text-sm font-medium text-[#374151]">
+          Correo
+        </Label>
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-[#9CA3AF]" />
           <Input
-            id={`${submitLabel}-email`}
-            className="pl-8"
+            id={`${mode}-email`}
+            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] pl-11 text-base focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
             type="email"
             autoComplete="email"
             placeholder="tu@email.com"
@@ -213,17 +282,20 @@ function AuthFields({
             aria-invalid={Boolean(errors.email)}
           />
         </div>
-        {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+        {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor={`${submitLabel}-password`}>Contraseña</Label>
+        <Label htmlFor={`${mode}-password`} className="text-sm font-medium text-[#374151]">
+          Contraseña
+        </Label>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-[#9CA3AF]" />
           <Input
-            id={`${submitLabel}-password`}
-            className="px-8"
+            id={`${mode}-password`}
+            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-11 text-base focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
             type={showPassword ? "text" : "password"}
-            autoComplete={submitLabel === "Entrar" ? "current-password" : "new-password"}
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
             placeholder="Mínimo 8 caracteres"
             value={form.password}
             onChange={(event) => onFieldChange("password", event.target.value)}
@@ -233,18 +305,67 @@ function AuthFields({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="absolute right-0.5 top-1/2 -translate-y-1/2"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-[#6B7280] hover:bg-[#F5F3FF] hover:text-[#6D28D9]"
             onClick={onTogglePassword}
             aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
           >
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </Button>
         </div>
-        {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
+        {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
       </div>
-      <Button className="w-full" type="submit" disabled={isPending}>
+
+      <div className="flex items-center justify-between gap-3 text-sm">
+        <label className="flex cursor-pointer items-center gap-2 text-[#4B5563]">
+          <Checkbox
+            checked={rememberMe}
+            onCheckedChange={(checked) => onRememberChange(Boolean(checked))}
+            className="data-checked:border-[#7C3AED] data-checked:bg-[#7C3AED]"
+          />
+          Recordarme
+        </label>
+        <button type="button" className="font-medium text-[#6D28D9] hover:text-[#5B21B6]">
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
+
+      <Button
+        className="h-12 w-full rounded-2xl bg-[#7C3AED] text-base font-semibold text-white shadow-lg shadow-violet-700/20 hover:bg-[#6D28D9]"
+        type="submit"
+        disabled={isPending}
+      >
         {isPending ? "Procesando..." : submitLabel}
       </Button>
+
+      <div className="flex items-center gap-3 text-xs text-[#9CA3AF]">
+        <Separator className="flex-1 bg-[#E5E7EB]" />
+        <span>o continúa con</span>
+        <Separator className="flex-1 bg-[#E5E7EB]" />
+      </div>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="h-12 w-full rounded-2xl border-[#E5E7EB] bg-white text-base font-medium text-[#111827] hover:bg-[#F5F3FF]"
+        disabled={isPending}
+        onClick={onGoogle}
+      >
+        <span className="flex size-5 items-center justify-center rounded-full border text-xs font-semibold text-[#6D28D9]">
+          G
+        </span>
+        Continuar con Google
+      </Button>
+
+      <p className="text-center text-sm text-[#6B7280]">
+        {mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
+        <button
+          type="button"
+          className="font-semibold text-[#6D28D9] hover:text-[#5B21B6]"
+          onClick={() => onModeChange(mode === "login" ? "signup" : "login")}
+        >
+          {mode === "login" ? "Regístrate" : "Inicia sesión"}
+        </button>
+      </p>
     </form>
   )
 }

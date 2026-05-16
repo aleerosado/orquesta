@@ -36,6 +36,14 @@ supabase/migrations/001_initial.sql
 
 Puedes pegarla en el SQL editor de Supabase o usar Supabase CLI si el proyecto está enlazado.
 
+Si Supabase muestra `Database error creating new user` al crear un usuario, aplica también:
+
+```bash
+supabase/migrations/002_fix_auth_user_trigger.sql
+```
+
+Ese script recrea el trigger de alta de usuarios con referencias explícitas a `public.tasks`.
+
 5. En Supabase Auth, habilita autenticación por email y contraseña.
 
 No se usa Google OAuth, GitHub OAuth ni magic link.
