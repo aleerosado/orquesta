@@ -162,28 +162,28 @@ export function LoginForm() {
   }
 
   return (
-    <div className="rounded-[1.75rem] border border-white/80 bg-white p-6 text-[#111827] shadow-2xl shadow-violet-950/12 sm:p-8">
-      <div className="mb-7 text-center">
-        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-[#111827] text-xl font-semibold text-white shadow-lg shadow-violet-900/20">
+    <div className="rounded-[1.55rem] border border-white/90 bg-white px-7 py-7 text-[#111827] shadow-2xl shadow-violet-950/10">
+      <div className="mb-6 text-center">
+        <div className="mx-auto mb-4 flex size-10 items-center justify-center rounded-xl bg-[#111827] text-lg font-semibold text-white shadow-lg shadow-violet-900/20">
           O
         </div>
-        <h2 className="text-2xl font-semibold tracking-tight">Orquesta</h2>
-        <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#6B7280]">
+        <h2 className="text-xl font-semibold tracking-tight">Orquesta</h2>
+        <p className="mx-auto mt-3 max-w-[310px] text-xs leading-6 text-[#6B7280]">
           Gestiona tu tesis, producto y startup de salud desde un tablero privado.
         </p>
       </div>
 
       <Tabs value={mode} onValueChange={switchMode}>
-        <TabsList variant="line" className="mb-6 grid h-10 w-full grid-cols-2 border-b border-[#E5E7EB] p-0">
+        <TabsList variant="line" className="mb-6 grid h-9 w-full grid-cols-2 border-b border-[#E5E7EB] p-0">
           <TabsTrigger
             value="login"
-            className="rounded-none pb-3 text-sm data-active:text-[#6D28D9] after:bg-[#7C3AED]"
+            className="rounded-none pb-3 text-xs data-active:text-[#111827] after:bg-[#7C3AED]"
           >
             Iniciar sesión
           </TabsTrigger>
           <TabsTrigger
             value="signup"
-            className="rounded-none pb-3 text-sm data-active:text-[#6D28D9] after:bg-[#7C3AED]"
+            className="rounded-none pb-3 text-xs data-active:text-[#111827] after:bg-[#7C3AED]"
           >
             Registrarse
           </TabsTrigger>
@@ -258,7 +258,7 @@ function AuthFields({
   onTogglePassword: () => void
 }) {
   return (
-    <form className="space-y-5" onSubmit={onSubmit} noValidate>
+    <form className="space-y-4" onSubmit={onSubmit} noValidate>
       {errors.form && (
         <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {errors.form}
@@ -266,14 +266,14 @@ function AuthFields({
       )}
 
       <div className="space-y-2">
-        <Label htmlFor={`${mode}-email`} className="text-sm font-medium text-[#374151]">
+        <Label htmlFor={`${mode}-email`} className="text-xs font-medium text-[#374151]">
           Correo
         </Label>
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-[#9CA3AF]" />
+          <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9CA3AF]" />
           <Input
             id={`${mode}-email`}
-            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] pl-11 text-base focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
+            className="h-10 rounded-xl border-[#E5E7EB] bg-[#FAFAFA] pl-10 text-sm focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
             type="email"
             autoComplete="email"
             placeholder="tu@email.com"
@@ -282,18 +282,18 @@ function AuthFields({
             aria-invalid={Boolean(errors.email)}
           />
         </div>
-        {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
+        {errors.email && <p className="text-xs text-red-600">{errors.email}</p>}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor={`${mode}-password`} className="text-sm font-medium text-[#374151]">
+        <Label htmlFor={`${mode}-password`} className="text-xs font-medium text-[#374151]">
           Contraseña
         </Label>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-[#9CA3AF]" />
+          <Lock className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9CA3AF]" />
           <Input
             id={`${mode}-password`}
-            className="h-12 rounded-2xl border-[#E5E7EB] bg-[#FAFAFA] px-11 text-base focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
+            className="h-10 rounded-xl border-[#E5E7EB] bg-[#FAFAFA] px-10 text-sm focus-visible:border-[#8B5CF6] focus-visible:ring-[#8B5CF6]/20"
             type={showPassword ? "text" : "password"}
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             placeholder="Mínimo 8 caracteres"
@@ -312,10 +312,10 @@ function AuthFields({
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </Button>
         </div>
-        {errors.password && <p className="text-sm text-red-600">{errors.password}</p>}
+        {errors.password && <p className="text-xs text-red-600">{errors.password}</p>}
       </div>
 
-      <div className="flex items-center justify-between gap-3 text-sm">
+      <div className="flex items-center justify-between gap-3 text-xs">
         <label className="flex cursor-pointer items-center gap-2 text-[#4B5563]">
           <Checkbox
             checked={rememberMe}
@@ -330,7 +330,7 @@ function AuthFields({
       </div>
 
       <Button
-        className="h-12 w-full rounded-2xl bg-[#7C3AED] text-base font-semibold text-white shadow-lg shadow-violet-700/20 hover:bg-[#6D28D9]"
+        className="h-10 w-full rounded-xl bg-[#7C3AED] text-sm font-semibold text-white shadow-lg shadow-violet-700/25 hover:bg-[#6D28D9]"
         type="submit"
         disabled={isPending}
       >
@@ -346,7 +346,7 @@ function AuthFields({
       <Button
         type="button"
         variant="outline"
-        className="h-12 w-full rounded-2xl border-[#E5E7EB] bg-white text-base font-medium text-[#111827] hover:bg-[#F5F3FF]"
+        className="h-10 w-full rounded-xl border-[#E5E7EB] bg-white text-sm font-medium text-[#111827] hover:bg-[#F5F3FF]"
         disabled={isPending}
         onClick={onGoogle}
       >
@@ -356,7 +356,7 @@ function AuthFields({
         Continuar con Google
       </Button>
 
-      <p className="text-center text-sm text-[#6B7280]">
+      <p className="text-center text-xs text-[#6B7280]">
         {mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
         <button
           type="button"
