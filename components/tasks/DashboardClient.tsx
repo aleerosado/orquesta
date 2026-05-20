@@ -21,10 +21,14 @@ export function DashboardClient({
   initialTasks,
   initialProjects,
   initialProjectId,
+  projectsSchemaReady,
+  projectsSchemaError,
 }: {
   initialTasks: Task[]
   initialProjects: Project[]
   initialProjectId: string
+  projectsSchemaReady: boolean
+  projectsSchemaError?: string
 }) {
   const [tasks, setTasks] = useState(initialTasks)
   const [projects, setProjects] = useState(initialProjects)
@@ -142,6 +146,18 @@ export function DashboardClient({
     <>
       <TopBar tasks={tasks} project={activeProject} />
       <main className="space-y-4 px-4 py-4 lg:px-8">
+        {!projectsSchemaReady && (
+          <section className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-950">
+            <h2 className="font-semibold">Falta activar proyectos en Supabase</h2>
+            <p className="mt-1 text-sm">
+              {projectsSchemaError ||
+                "Aplica la migración 003_projects.sql para habilitar varios proyectos."}
+            </p>
+            <p className="mt-3 rounded-md bg-white/70 px-3 py-2 font-mono text-xs">
+              supabase/migrations/003_projects.sql
+            </p>
+          </section>
+        )}
         <section className="grid gap-3 rounded-lg border bg-card p-3 lg:grid-cols-[minmax(240px,340px)_1fr] lg:items-end">
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm font-medium">
@@ -151,6 +167,7 @@ export function DashboardClient({
             <select
               className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm"
               value={activeProject?.id ?? ""}
+              disabled={!projectsSchemaReady}
               onChange={(event) => changeProject(event.target.value)}
             >
               {projects.map((project) => (
@@ -165,8 +182,9 @@ export function DashboardClient({
               value={newProjectName}
               onChange={(event) => setNewProjectName(event.target.value)}
               placeholder="Nuevo proyecto: agenda personal, producto, investigación..."
+              disabled={!projectsSchemaReady}
             />
-            <Button type="submit" className="shrink-0">
+            <Button type="submit" className="shrink-0" disabled={!projectsSchemaReady}>
               <Plus className="size-4" />
               Crear proyecto
             </Button>

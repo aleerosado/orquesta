@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/apply-supabase-migrations.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:migrate": "node scripts/apply-supabase-migrations.mjs --required",
+    "db:migrate:dry-run": "node scripts/apply-supabase-migrations.mjs --required --dry-run"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",

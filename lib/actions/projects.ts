@@ -30,6 +30,35 @@ export async function getProjects(): Promise<Project[]> {
   return [created]
 }
 
+export async function getProjectsState(): Promise<{
+  projects: Project[]
+  schemaReady: boolean
+  error?: string
+}> {
+  try {
+    const projects = await getProjects()
+    return { projects, schemaReady: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    const missingProjectsSchema =
+      message.includes("projects") &&
+      (message.includes("schema cache") ||
+        message.includes("does not exist") ||
+        message.includes("Could not find"))
+
+    if (missingProjectsSchema) {
+      return {
+        projects: [],
+        schemaReady: false,
+        error:
+          "Falta aplicar la migración supabase/migrations/003_projects.sql en Supabase.",
+      }
+    }
+
+    throw error
+  }
+}
+
 export async function createProject(form: ProjectFormData): Promise<Project> {
   const supabase = createServerClient()
   const {

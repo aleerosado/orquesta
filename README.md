@@ -47,11 +47,23 @@ Ese script recrea el trigger de alta de usuarios con referencias explícitas a `
 Para habilitar varios proyectos por usuario, aplica:
 
 ```bash
-supabase/migrations/003_projects.sql
+npm run db:migrate
 ```
 
-Esa migración crea `projects`, relaciona cada tarea con un proyecto, migra las tareas existentes a
+Ese comando ejecuta las migraciones de `supabase/migrations` con Supabase CLI. Requiere
+`SUPABASE_DB_URL` en `.env.local` o en variables del entorno. La migración `003_projects.sql`
+crea `projects`, relaciona cada tarea con un proyecto, migra las tareas existentes a
 `Tesis y concursos` y actualiza el trigger de nuevos usuarios.
+
+Para automatizarlo en Vercel:
+
+```bash
+SUPABASE_DB_URL=postgresql://...
+AUTO_APPLY_MIGRATIONS=true
+```
+
+El script `prebuild` aplicará migraciones antes de `next build` solo cuando
+`AUTO_APPLY_MIGRATIONS=true`.
 
 5. En Supabase Auth, habilita autenticación por email y contraseña.
 
