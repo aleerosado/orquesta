@@ -1,8 +1,8 @@
 import { CheckCircle2, Circle, Flame, TrendingUp } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
-import { Task } from "@/lib/types"
+import { Project, Task } from "@/lib/types"
 
-export function TopBar({ tasks }: { tasks: Task[] }) {
+export function TopBar({ tasks, project }: { tasks: Task[]; project?: Project }) {
   const total = tasks.length
   const done = tasks.filter((task) => task.status === "listo").length
   const urgent = tasks.filter(
@@ -20,9 +20,12 @@ export function TopBar({ tasks }: { tasks: Task[] }) {
   return (
     <header className="border-b bg-background/95 px-4 py-4 lg:px-8">
       <div className="mb-4 flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {project?.name ?? "Dashboard"}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          Prioridades de tesis, producto, validación clínica y concursos.
+          {project?.description ||
+            "Prioridades, tareas, entregables y progreso del proyecto seleccionado."}
         </p>
       </div>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">

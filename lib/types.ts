@@ -1,9 +1,21 @@
 export type TaskStatus = "pendiente" | "en progreso" | "listo"
 export type TaskTag = "urgente" | "tecnico" | "paper" | "negocio" | "concurso"
 
+export interface Project {
+  id: string
+  user_id: string
+  name: string
+  description?: string
+  color: string
+  order_index: number
+  created_at: string
+  updated_at: string
+}
+
 export interface Task {
   id: string
   user_id: string
+  project_id: string
   title: string
   notes?: string
   phase: string
@@ -22,6 +34,12 @@ export interface TaskFormData {
   status: TaskStatus
   tags: TaskTag[]
   due_date?: string
+}
+
+export interface ProjectFormData {
+  name: string
+  description?: string
+  color?: string
 }
 
 export const PHASES = [

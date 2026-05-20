@@ -44,6 +44,15 @@ supabase/migrations/002_fix_auth_user_trigger.sql
 
 Ese script recrea el trigger de alta de usuarios con referencias explícitas a `public.tasks`.
 
+Para habilitar varios proyectos por usuario, aplica:
+
+```bash
+supabase/migrations/003_projects.sql
+```
+
+Esa migración crea `projects`, relaciona cada tarea con un proyecto, migra las tareas existentes a
+`Tesis y concursos` y actualiza el trigger de nuevos usuarios.
+
 5. En Supabase Auth, habilita autenticación por email y contraseña.
 
 No se usa Google OAuth, GitHub OAuth ni magic link.

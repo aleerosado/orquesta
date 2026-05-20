@@ -4,25 +4,31 @@ import { createServerClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { Task, TaskFormData } from "@/lib/types"
 
-export async function getTasks(): Promise<Task[]> {
+export async function getTasks(projectId?: string): Promise<Task[]> {
   const supabase = createServerClient()
-  const { data, error } = await supabase
+  let query = supabase
     .from("tasks")
     .select("*")
     .order("phase")
     .order("order_index")
+
+  if (projectId) {
+    query = query.eq("project_id", projectId)
+  }
+
+  const { data, error } = await query
   if (error) throw error
   return data ?? []
 }
 
-export async function createTask(form: TaskFormData): Promise<Task> {
+export async function createTask(form: TaskFormData, projectId: string): Promise<Task> {
   const supabase = createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error("No autenticado")
 
   const { data, error } = await supabase
     .from("tasks")
-    .insert({ ...form, user_id: user.id })
+    .insert({ ...form, project_id: projectId, user_id: user.id })
     .select()
     .single()
   if (error) throw error
