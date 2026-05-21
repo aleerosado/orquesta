@@ -1,19 +1,35 @@
 import { DashboardClient } from "@/components/tasks/DashboardClient"
 import { getTasks } from "@/lib/actions/tasks"
 import { getProjectsState } from "@/lib/actions/projects"
-import { Task } from "@/lib/types"
+import { Project, Task } from "@/lib/types"
 
 export default async function DashboardPage({
   searchParams,
 }: {
   searchParams?: { project?: string }
 }) {
-  const { projects, schemaReady, error } = await getProjectsState()
+  let projects: Project[] = []
+  let schemaReady = true
+  let schemaError: string | undefined
+
+  try {
+    const state = await getProjectsState()
+    projects = state.projects
+    schemaReady = state.schemaReady
+    schemaError = state.error
+  } catch (error) {
+    schemaReady = false
+    schemaError =
+      error instanceof Error
+        ? error.message
+        : "No se pudo cargar la configuración de proyectos."
+  }
+
   const activeProject =
     projects.find((project) => project.id === searchParams?.project) ?? projects[0]
   let tasks: Task[] = []
   let dashboardSchemaReady = schemaReady
-  let dashboardSchemaError = error
+  let dashboardSchemaError = schemaError
 
   if (schemaReady && activeProject) {
     try {
@@ -25,13 +41,11 @@ export default async function DashboardPage({
         message.includes("schema cache") ||
         message.includes("Could not find")
 
-      if (!missingProjectColumn) {
-        throw error
-      }
-
       dashboardSchemaReady = false
       dashboardSchemaError =
-        "Falta completar la migración supabase/migrations/003_projects.sql en Supabase."
+        missingProjectColumn
+          ? "Falta completar la migración supabase/migrations/003_projects.sql en Supabase."
+          : message
     }
   }
 
