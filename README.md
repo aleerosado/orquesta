@@ -69,9 +69,21 @@ debería tener este formato:
 SUPABASE_DB_URL=postgresql://postgres.hylylxjrhcwkpcjzjdlk:TU_PASSWORD@aws-0-us-west-1.pooler.supabase.com:5432/postgres?sslmode=require
 ```
 
-El script `prebuild` detecta Vercel y aplica las migraciones antes de `next build`.
-Si falta `SUPABASE_DB_URL`, el deploy debe fallar para evitar publicar código nuevo
-contra una base de datos sin migrar.
+El script `prebuild` detecta Vercel e intenta aplicar las migraciones antes de
+`next build`. Si Supabase rechaza la conexión desde Vercel, el build continúa y
+el dashboard mostrará el aviso de migración pendiente.
+
+Si quieres que el deploy falle cuando no pueda migrar, agrega:
+
+```bash
+REQUIRE_SUPABASE_MIGRATIONS=true
+```
+
+Si el pooler sigue fallando, aplica la migración una vez desde Supabase:
+
+1. Supabase → SQL Editor.
+2. Abre `supabase/migrations/003_projects.sql`.
+3. Pega todo el contenido y ejecútalo.
 
 Fuera de Vercel, puedes forzar el mismo comportamiento con:
 
