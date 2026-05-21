@@ -61,6 +61,14 @@ Para automatizarlo en Vercel:
 SUPABASE_DB_URL=postgresql://...
 ```
 
+En Vercel no uses la URL directa `db.<project-ref>.supabase.co:5432`, porque puede
+fallar por IPv6. Usa la URL de **Session pooler** de Supabase. Para este proyecto
+debería tener este formato:
+
+```bash
+SUPABASE_DB_URL=postgresql://postgres.hylylxjrhcwkpcjzjdlk:TU_PASSWORD@aws-0-us-west-1.pooler.supabase.com:5432/postgres?sslmode=require
+```
+
 El script `prebuild` detecta Vercel y aplica las migraciones antes de `next build`.
 Si falta `SUPABASE_DB_URL`, el deploy debe fallar para evitar publicar código nuevo
 contra una base de datos sin migrar.

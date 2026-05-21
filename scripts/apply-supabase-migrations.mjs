@@ -33,6 +33,29 @@ if (!dbUrl) {
   process.exit(0)
 }
 
+let dbHostname = ""
+let dbPort = ""
+
+try {
+  const parsedDbUrl = new URL(dbUrl)
+  dbHostname = parsedDbUrl.hostname
+  dbPort = parsedDbUrl.port
+} catch {
+  console.error("SUPABASE_DB_URL is not a valid Postgres URL.")
+  process.exit(1)
+}
+
+if (dbHostname.startsWith("db.") && dbHostname.endsWith(".supabase.co") && dbPort === "5432") {
+  console.error(
+    [
+      "SUPABASE_DB_URL is using Supabase Direct connection, which often fails from Vercel because it requires IPv6.",
+      "Use the Supabase Session pooler URI instead:",
+      "postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require",
+    ].join("\n")
+  )
+  process.exit(1)
+}
+
 const commandArgs = [
   "supabase",
   "db",
