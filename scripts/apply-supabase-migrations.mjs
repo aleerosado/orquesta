@@ -19,7 +19,7 @@ if (!dbUrl) {
   const message =
     "Missing SUPABASE_DB_URL. Set it to your Supabase Postgres connection string to apply migrations."
 
-  if (required) {
+  if (required || autoApply) {
     console.error(message)
     process.exit(1)
   }
