@@ -18,10 +18,16 @@ export default async function DashboardLayout({
 
   if (!user) redirect("/login")
 
-  const tasks = await getTasks()
-  const urgentPending = tasks.filter(
-    (task) => task.status !== "listo" && task.tags.includes("urgente")
-  ).length
+  let urgentPending = 0
+
+  try {
+    const tasks = await getTasks()
+    urgentPending = tasks.filter(
+      (task) => task.status !== "listo" && task.tags.includes("urgente")
+    ).length
+  } catch {
+    urgentPending = 0
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground lg:flex">
