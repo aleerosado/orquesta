@@ -3,7 +3,10 @@ import { spawnSync } from "node:child_process"
 const args = new Set(process.argv.slice(2))
 const required = args.has("--required")
 const dryRun = args.has("--dry-run")
-const autoApply = process.env.AUTO_APPLY_MIGRATIONS === "true"
+const autoApplySetting = process.env.AUTO_APPLY_MIGRATIONS
+const isVercelBuild = process.env.VERCEL === "1"
+const autoApply =
+  autoApplySetting === "true" || (isVercelBuild && autoApplySetting !== "false")
 const dbUrl =
   process.env.SUPABASE_DB_URL ||
   process.env.POSTGRES_URL_NON_POOLING ||
@@ -11,7 +14,9 @@ const dbUrl =
   process.env.DATABASE_URL
 
 if (!required && !autoApply) {
-  console.log("Supabase migrations skipped. Set AUTO_APPLY_MIGRATIONS=true to run during build.")
+  console.log(
+    "Supabase migrations skipped. Set AUTO_APPLY_MIGRATIONS=true to run outside Vercel."
+  )
   process.exit(0)
 }
 

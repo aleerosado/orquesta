@@ -59,11 +59,17 @@ Para automatizarlo en Vercel:
 
 ```bash
 SUPABASE_DB_URL=postgresql://...
-AUTO_APPLY_MIGRATIONS=true
 ```
 
-El script `prebuild` aplicará migraciones antes de `next build` solo cuando
-`AUTO_APPLY_MIGRATIONS=true`.
+El script `prebuild` detecta Vercel y aplica las migraciones antes de `next build`.
+Si falta `SUPABASE_DB_URL`, el deploy debe fallar para evitar publicar código nuevo
+contra una base de datos sin migrar.
+
+Fuera de Vercel, puedes forzar el mismo comportamiento con:
+
+```bash
+AUTO_APPLY_MIGRATIONS=true
+```
 
 5. En Supabase Auth, habilita autenticación por email y contraseña.
 
